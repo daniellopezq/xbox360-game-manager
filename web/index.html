@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0b0f14">
+<title>Xbox 360 Game Manager</title>
+<link rel="icon" href="/static/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/style.css">
+<script type="module" src="/static/app.js"></script>
+</head>
+<body>
+<div class="xb">
+  <header class="xb-head">
+    <h1>Xbox 360</h1>
+    <div class="xb-status" id="status" role="status">Loading&hellip;</div>
+  </header>
+  <section class="xb-now" id="now" hidden aria-live="polite"></section>
+  <div class="xb-drive" id="drive" hidden></div>
+  <section class="xb-job" id="job" hidden aria-live="polite"></section>
+  <div class="xb-last" id="last" hidden></div>
+  <div class="xb-tools">
+    <input type="search" id="search" placeholder="Search games" aria-label="Search games" autocomplete="off">
+    <div class="xb-filter" id="filter" role="group" aria-label="Show">
+      <button type="button" data-f="all" aria-pressed="true">All</button>
+      <button type="button" data-f="on">On Xbox</button>
+      <button type="button" data-f="off">Not on Xbox</button>
+    </div>
+  </div>
+  <p class="xb-count" id="count"></p>
+  <main class="xb-grid" id="grid"></main>
+</div>
+<noscript><p class="boot-msg">JavaScript is required.</p></noscript>
+</body>
+</html>

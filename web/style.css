@@ -1,0 +1,176 @@
+/* Xbox 360 Game Manager. Dark by default, light when the system asks for it. */
+
+:root {
+  --bg: #0b0f14;
+  --surface: #121a23;
+  --surface-2: #182230;
+  --border: #233040;
+  --text: #e6edf3;
+  --muted: #8b9bab;
+  --accent: #58a6ff;
+  --accent-strong: #1f6feb;
+  --ok: #3fb950;
+  --warn: #d29922;
+  --fail: #f85149;
+  --unknown: #6e7d8c;
+  --radius: 14px;
+  --gap: 16px;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f3f5f8;
+    --surface: #ffffff;
+    --surface-2: #eef2f6;
+    --border: #d8dee6;
+    --text: #17202a;
+    --muted: #5b6876;
+    --accent: #0b63ce;
+    --accent-strong: #0b63ce;
+    --ok: #1a7f37;
+    --warn: #9a6700;
+    --fail: #cf222e;
+    --unknown: #8c959f;
+    color-scheme: light;
+  }
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+a { color: var(--accent); }
+h1, h2 { margin: 0; font-weight: 600; }
+[hidden] { display: none !important; }
+
+.boot-msg { padding: 24px; color: var(--muted); }
+
+
+.xb { max-width: 1200px; margin: 0 auto; padding: 16px 16px 48px; }
+.xb-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-bottom: 16px; }
+.xb-head h1 { font-size: 26px; flex: 1; min-width: 0; }
+.xb-status {
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px;
+  background: var(--surface); border: 1px solid var(--border); font-size: 14px; color: var(--muted);
+}
+.xb-status::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--unknown); }
+.xb-status.ok { color: var(--text); }
+.xb-status.ok::before { background: var(--ok); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 25%, transparent); }
+.xb-status.warn::before { background: var(--warn); }
+
+.xb-drive, .xb-last {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 12px; padding: 12px 14px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px;
+}
+.xb-drive strong { font-size: 15px; }
+.xb-drive .grow, .xb-last .grow { flex: 1; min-width: 0; color: var(--muted); }
+.xb-last.fail { border-color: color-mix(in srgb, var(--fail) 50%, var(--border)); }
+.xb-last.ok { border-color: color-mix(in srgb, var(--ok) 50%, var(--border)); }
+
+.xb-btn {
+  border: 0; border-radius: 10px; padding: 9px 14px; font: inherit; font-size: 14px; font-weight: 600;
+  background: var(--accent-strong); color: #fff; cursor: pointer; white-space: nowrap;
+}
+.xb-btn:disabled { opacity: 0.5; cursor: default; }
+.xb-btn.quiet { background: var(--surface-2); color: var(--text); }
+.xb-btn.danger { background: transparent; color: var(--fail); box-shadow: inset 0 0 0 1px var(--fail); }
+
+/* the copy in progress */
+.xb-job {
+  position: sticky; top: 8px; z-index: 5; display: grid; grid-template-columns: 96px 1fr; gap: 12px 14px;
+  margin-bottom: 16px; padding: 12px; border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 94%, transparent); border: 1px solid var(--border);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 25%); backdrop-filter: blur(8px);
+}
+.xb-job img, .xb-job .xb-noart { width: 96px; aspect-ratio: 420 / 320; border-radius: 8px; object-fit: cover; }
+.xb-job .xb-noart { font-size: 22px; }
+.xb-job-main { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.xb-job-top { display: flex; align-items: center; gap: 8px; }
+.xb-job-top strong { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.xb-bar { height: 8px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
+.xb-bar i { display: block; height: 100%; background: var(--ok); border-radius: inherit; transition: width 1s linear; }
+.xb-job-meta { font-size: 13px; color: var(--muted); }
+.xb-job-file { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.xb-queue { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 13px; color: var(--muted); }
+.xb-chip {
+  display: inline-flex; align-items: center; gap: 4px; padding: 3px 4px 3px 10px; border-radius: 99px;
+  background: var(--surface-2); color: var(--text);
+}
+.xb-chip button { border: 0; background: none; color: var(--muted); font: inherit; font-size: 16px; line-height: 1; cursor: pointer; padding: 2px 6px; }
+
+/* search + filter */
+.xb-tools { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
+.xb-tools input {
+  flex: 1 1 220px; min-width: 0; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text); font: inherit;
+}
+.xb-filter { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 3px; }
+.xb-filter button {
+  border: 0; background: none; color: var(--muted); font: inherit; font-size: 14px; padding: 7px 12px;
+  border-radius: 8px; cursor: pointer;
+}
+.xb-filter button[aria-pressed="true"] { background: var(--surface-2); color: var(--text); font-weight: 600; }
+.xb-count { margin: 4px 0 12px; font-size: 13px; color: var(--muted); }
+
+/* game tiles */
+.xb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+@media (min-width: 700px) { .xb-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); } }
+.xb-game {
+  display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden; min-width: 0;
+}
+.xb-game.complete { border-color: color-mix(in srgb, var(--ok) 45%, var(--border)); }
+.xb-art { position: relative; aspect-ratio: 420 / 320; background: var(--surface-2); }
+.xb-art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.xb-noart {
+  display: grid; place-items: center; width: 100%; height: 100%; font-size: 30px; font-weight: 700;
+  color: #fff; letter-spacing: 0.04em;
+  background: linear-gradient(135deg, hsl(var(--hue) 45% 32%), hsl(calc(var(--hue) + 40) 50% 18%));
+}
+.xb-badge {
+  position: absolute; left: 8px; top: 8px; padding: 3px 8px; border-radius: 99px; font-size: 12px; font-weight: 700;
+  background: rgb(0 0 0 / 65%); color: #fff;
+}
+.xb-badge.complete { background: var(--ok); }
+.xb-badge.partial { background: var(--warn); }
+.xb-badge.copying { background: var(--accent-strong); }
+.xb-info { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px 12px; flex: 1; }
+.xb-name { font-weight: 600; font-size: 15px; line-height: 1.25; overflow-wrap: anywhere; }
+.xb-meta { font-size: 13px; color: var(--muted); }
+.xb-note { font-size: 12px; color: var(--muted); }
+.xb-note.fail { color: var(--fail); }
+.xb-info .xb-btn { margin-top: auto; align-self: stretch; }
+.xb-info .spacer { flex: 1; min-height: 8px; }
+.xb-empty { grid-column: 1 / -1; color: var(--muted); padding: 24px 0; text-align: center; }
+
+/* now playing */
+.xb-now {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 12px; padding: 12px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+}
+.xb-now > img, .xb-now > .xb-noart { width: 84px; aspect-ratio: 420 / 320; border-radius: 8px; object-fit: cover; flex: none; font-size: 20px; }
+.xb-now-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.xb-now-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ok); font-weight: 700; }
+.xb-now-main strong { font-size: 17px; overflow-wrap: anywhere; }
+.xb-now-text { color: var(--muted); font-size: 14px; }
+.xb-temps { display: flex; flex-wrap: wrap; gap: 6px; }
+.xb-temp { font-size: 12px; padding: 2px 8px; border-radius: 99px; background: var(--surface-2); color: var(--muted); }
+.xb-temp.warn { background: color-mix(in srgb, var(--warn) 25%, transparent); color: var(--warn); font-weight: 700; }
+
+/* free space, in the drive bar */
+.xb-space { width: 100%; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
+.xb-space strong { color: var(--text); }
+.xb-space .xb-bar i { background: var(--accent); }
+.xb-space .xb-bar.full i { background: var(--fail); }
+.xb-size { display: flex; align-items: center; gap: 6px; }
+.xb-size input {
+  width: 96px; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--text); font: inherit;
+}
+.xb-btn.play { background: var(--ok); color: #fff; }
+.xb-temp.space { color: var(--text); }

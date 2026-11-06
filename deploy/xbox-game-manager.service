@@ -1,0 +1,16 @@
+# systemd user service: copy to ~/.config/systemd/user/, set WorkingDirectory, then
+#   systemctl --user daemon-reload && systemctl --user enable --now xbox-game-manager
+#   loginctl enable-linger $USER   # keep it running when you are logged out
+[Unit]
+Description=Xbox 360 Game Manager (Aurora)
+After=network-online.target
+
+[Service]
+WorkingDirectory=%h/xbox360-game-manager
+ExecStartPre=/usr/bin/python3 server.py --check
+ExecStart=/usr/bin/python3 server.py
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target
